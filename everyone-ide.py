@@ -1,3 +1,5 @@
+#Everyone IDE by Jesse K. and M4-4TechGuns
+
 import tkinter as tk
 from tkinter import messagebox as mb
 import os
