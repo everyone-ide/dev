@@ -3,6 +3,7 @@ from tkinter import messagebox as mb
 import os
 from tkinter import filedialog as fd
 from tkinter import ttk
+import shutil
 
 #Settings
 bg = "#ededed"
@@ -17,10 +18,37 @@ possible_chars = [
     "[","]","{","}",";",",","."
 ]
 
+def get_lb(root_l):
+    item = root_l.get(root_l.curselection())
+    return item
+
 def set_entry(e,text):
     e.delete(0,tk.END)
     e.insert(0,text)
     return
+
+def editor(proname,propath,procode,protype):
+    print(proname)
+    print(propath)
+    print(procode)
+    print(protype)
+
+def newpro_create():
+    global protype
+    protype = newpro2_cb.get()
+
+    try:
+        newpro2.destroy()
+    except:
+        pass
+
+    prdf = open("./prd/" + proname + ".eprd","w")
+    prdf.write(proname + "\n" + propath + "\n" + procode + "\n" + protype)
+    prdf.close()
+
+    os.mkdir(propath + "/" + proname)
+
+    editor(proname,propath,procode,protype)
 
 def newpro_browsepath():
     path = fd.askdirectory()
@@ -57,7 +85,7 @@ def create_screen2():
         newpro2_cb.grid(row=0,column=1)
         newpro2_cb.current(0)
 
-        newpro2_btn = tk.Button(newpro2,text="Create",bg=btn,fg=fg,font="Arial",width=40,height=5)
+        newpro2_btn = tk.Button(newpro2,text="Create",bg=btn,fg=fg,font="Arial",width=40,height=5,command=newpro_create)
         newpro2_btn.grid(row=1,column=0)
 
         newpro2.mainloop()
@@ -122,6 +150,138 @@ def create_screen():
     else:
         mb.showerror("Error creating project","Woops, you forgot to fill in a project name!")
 
+def load_load():
+    global proname
+    global propath
+    global procode
+    global protype
+    try:
+        sel = get_lb(load_lb)
+
+        with open("./prd/" + sel + ".eprd") as data:
+            lines = data.readlines()
+        proname = lines[0]
+        propath = lines[1]
+        procode = lines[2]
+        protype = lines[3]
+
+        try:
+            load.destroy()
+        except:
+            pass
+
+        editor(proname,propath,procode,protype)
+    except:
+        mb.showerror("Error loading project","Woops, you forgot to select a project to load!")
+
+def load_screen():
+    try:
+        home.destroy()
+    except:
+        pass
+
+    global load
+    load = tk.Tk()
+    load.title("Load Project")
+    load.config(bg=bg)
+    load.geometry("365x350")
+    load.iconbitmap("res/icon.ico")
+
+    load_lblfr = tk.LabelFrame(load,text="Select project",padx=87,pady=30)
+    load_lblfr.grid(row=0,column=0)
+
+    global load_lb
+    load_lb = tk.Listbox(load_lblfr,selectmode=tk.SINGLE)
+    load_lb.grid(row=0,column=0)
+    load_lb.delete(0,tk.END)
+    for file in os.listdir("./prd/"):
+        load_lb.insert(1,os.path.splitext(str(file))[0])
+
+    load_btn = tk.Button(load,text="Load",bg=btn,fg=fg,font="Arial",width=40,height=5,command=load_load)
+    load_btn.grid(row=1,column=0)
+
+    load.mainloop()
+
+def sts_backup_do():
+    shutil.copyfile("./prd/" + get_lb(bau_lb) + ".eprd","./backup/" + get_lb(bau_lb) + ".eprd")
+    mb.showinfo("Done","Backuped " + get_lb(bau_lb))
+
+def sts_loadbackup_do():
+    shutil.copyfile("./backup/" + get_lb(bau_lb) + ".eprd","./prd/" + get_lb(bau_lb) + ".eprd")
+    mb.showinfo("Done","Loaded " + get_lb(bau_lb) + " from backup")
+
+def sts_backup():
+    global bau
+    bau = tk.Tk()
+    bau.title("Backup Project")
+    bau.config(bg=bg)
+    bau.geometry("365x350")
+    bau.iconbitmap("res/icon.ico")
+
+    bau_lblfr = tk.LabelFrame(bau,text="Select backup",padx=87,pady=30)
+    bau_lblfr.grid(row=0,column=0)
+
+    global bau_lb
+    bau_lb = tk.Listbox(bau_lblfr,selectmode=tk.SINGLE)
+    bau_lb.grid(row=0,column=0)
+    bau_lb.delete(0,tk.END)
+    for file in os.listdir("./prd/"):
+        bau_lb.insert(1,os.path.splitext(str(file))[0])
+
+    bau_btn = tk.Button(bau,text="Backup",bg=btn,fg=fg,font="Arial",width=40,height=5,command=sts_backup_do)
+    bau_btn.grid(row=2,column=0)
+
+def sts_loadbackup():
+    global bau
+    bau = tk.Tk()
+    bau.title("Load Backup Project")
+    bau.config(bg=bg)
+    bau.geometry("365x350")
+    bau.iconbitmap("res/icon.ico")
+
+    bau_lblfr = tk.LabelFrame(bau,text="Select project",padx=87,pady=30)
+    bau_lblfr.grid(row=0,column=0)
+
+    global bau_lb
+    bau_lb = tk.Listbox(bau_lblfr,selectmode=tk.SINGLE)
+    bau_lb.grid(row=0,column=0)
+    bau_lb.delete(0,tk.END)
+    for file in os.listdir("./backup/"):
+        bau_lb.insert(1,os.path.splitext(str(file))[0])
+
+    bau_btn = tk.Button(bau,text="Load",bg=btn,fg=fg,font="Arial",width=40,height=5,command=sts_loadbackup_do)
+    bau_btn.grid(row=2,column=0)
+
+def settings():
+    try:
+        home.destroy()
+    except:
+        pass
+
+    global settings
+    sts = tk.Tk()
+    sts.title("Preferences")
+    sts.config(bg=bg)
+    sts.geometry("675x500")
+    sts.iconbitmap("res/icon.ico")
+
+    sts_lblfr = tk.LabelFrame(sts,text="Backups",padx=250,pady=30)
+    sts_lblfr.grid(row=0,column=0)
+
+    sts_lbl = tk.Label(sts_lblfr,text="Backup project: ",bg=bg,fg=fg,font="Arial")
+    sts_lbl.grid(row=0,column=0)
+
+    sts_btn = tk.Button(sts_lblfr,text="Select project",bg=btn,fg=fg,font="Arial",command=sts_backup)
+    sts_btn.grid(row=0,column=1)
+
+    sts_lbl2 = tk.Label(sts_lblfr,text="Load backup: ",bg=bg,fg=fg,font="Arial")
+    sts_lbl2.grid(row=1,column=0)
+
+    sts_btn2 = tk.Button(sts_lblfr,text="Select project",bg=btn,fg=fg,font="Arial",command=sts_loadbackup)
+    sts_btn2.grid(row=1,column=1)
+
+    sts.mainloop()
+
 def home():
     global home
     home = tk.Tk()
@@ -152,7 +312,7 @@ def home():
     home_lbl2 = tk.Label(home_lblfr2,text="Load your project here.",bg=bg,fg=fg,font="Arial")
     home_lbl2.grid(row=1,column=0)
 
-    home_btn2 = tk.Button(home_lblfr2,text="Load",bg=btn,fg=fg,font="Arial")
+    home_btn2 = tk.Button(home_lblfr2,text="Load",bg=btn,fg=fg,font="Arial",command=load_screen)
     home_btn2.grid(row=1,column=1)
 
     home_lblfr3 = tk.LabelFrame(home,text="Preferences",padx=55,pady=30)
@@ -161,7 +321,7 @@ def home():
     home_lbl3 = tk.Label(home_lblfr3,text="Would you like to set up the IDE to your liking? You're at the right place.",bg=bg,fg=fg,font="Arial")
     home_lbl3.grid(row=1,column=0)
 
-    home_btn3 = tk.Button(home_lblfr3,text="Preferences",bg=btn,fg=fg,font="Arial")
+    home_btn3 = tk.Button(home_lblfr3,text="Preferences",bg=btn,fg=fg,font="Arial",command=settings)
     home_btn3.grid(row=1,column=1)
 
     home_lbl4 = tk.Label(home,text="",bg=bg,fg=fg,font="Arial")
