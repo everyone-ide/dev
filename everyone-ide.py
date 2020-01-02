@@ -6,11 +6,14 @@ import os
 from tkinter import filedialog as fd
 from tkinter import ttk
 import shutil
+import sys
 
 #Settings
-bg = "#ededed"
-btn = "#dbdbdb"
-fg = "#000"
+with open("sts.ests") as data:
+    lines = data.readlines()
+bg = lines[0]
+btn = lines[1]
+fg = lines[2]
 
 #Vars
 possible_chars = [
@@ -76,7 +79,7 @@ def create_screen2():
         newpro2.geometry("500x225")
         newpro2.iconbitmap("res/icon.ico")
 
-        newpro2_lblfr = tk.LabelFrame(newpro2,text="Project type",padx=150,pady=30)
+        newpro2_lblfr = tk.LabelFrame(newpro2,text="Project type",bg=bg,fg=fg,padx=150,pady=30)
         newpro2_lblfr.grid(row=0,column=0)
 
         newpro2_lbl = tk.Label(newpro2_lblfr,text="Project type: ",bg=bg,fg=fg,font="Arial")
@@ -114,7 +117,7 @@ def create_screen():
         newpro.geometry("500x300")
         newpro.iconbitmap("res/icon.ico")
 
-        newpro_lblfr = tk.LabelFrame(newpro,text="Settings",padx=75,pady=30)
+        newpro_lblfr = tk.LabelFrame(newpro,text="Settings",bg=bg,fg=fg,padx=75,pady=30)
         newpro_lblfr.grid(row=0,column=0)
 
         newpro_lbl = tk.Label(newpro_lblfr,text="Name: ",bg=bg,fg=fg,font="Arial")
@@ -189,7 +192,7 @@ def load_screen():
     load.geometry("365x350")
     load.iconbitmap("res/icon.ico")
 
-    load_lblfr = tk.LabelFrame(load,text="Select project",padx=87,pady=30)
+    load_lblfr = tk.LabelFrame(load,text="Select project",bg=bg,fg=fg,padx=87,pady=30)
     load_lblfr.grid(row=0,column=0)
 
     global load_lb
@@ -220,7 +223,7 @@ def sts_backup():
     bau.geometry("365x350")
     bau.iconbitmap("res/icon.ico")
 
-    bau_lblfr = tk.LabelFrame(bau,text="Select backup",padx=87,pady=30)
+    bau_lblfr = tk.LabelFrame(bau,text="Select backup",bg=bg,fg=fg,padx=87,pady=30)
     bau_lblfr.grid(row=0,column=0)
 
     global bau_lb
@@ -241,7 +244,7 @@ def sts_loadbackup():
     bau.geometry("365x350")
     bau.iconbitmap("res/icon.ico")
 
-    bau_lblfr = tk.LabelFrame(bau,text="Select project",padx=87,pady=30)
+    bau_lblfr = tk.LabelFrame(bau,text="Select project",bg=bg,fg=fg,padx=87,pady=30)
     bau_lblfr.grid(row=0,column=0)
 
     global bau_lb
@@ -254,20 +257,45 @@ def sts_loadbackup():
     bau_btn = tk.Button(bau,text="Load",bg=btn,fg=fg,font="Arial",width=40,height=5,command=sts_loadbackup_do)
     bau_btn.grid(row=2,column=0)
 
+def sts_theme_save():
+    global bg
+    global btn
+    global fg
+
+    sel = sts_cb.get()
+
+    stsf = open("sts.ests","w")
+
+    if sel == "Light":
+        stsf.write("#ededed\n#dbdbdb\n#000")
+        bg = "#ededed"
+        btn = "#dbdbdb"
+        fg = "#000"
+    elif sel == "Dark":
+        stsf.write("#303030\n#505050\n#fff")
+        bg = "#303030"
+        btn = "#505050"
+        fg = "#fff"
+
+    stsf.close()
+
+    sts.destroy()
+    home_screen()
+    
 def settings():
     try:
         home.destroy()
     except:
         pass
 
-    global settings
+    global sts
     sts = tk.Tk()
     sts.title("Preferences")
     sts.config(bg=bg)
-    sts.geometry("675x500")
+    sts.geometry("675x295")
     sts.iconbitmap("res/icon.ico")
 
-    sts_lblfr = tk.LabelFrame(sts,text="Backups",padx=250,pady=30)
+    sts_lblfr = tk.LabelFrame(sts,text="Backups",bg=bg,fg=fg,padx=263,pady=30)
     sts_lblfr.grid(row=0,column=0)
 
     sts_lbl = tk.Label(sts_lblfr,text="Backup project: ",bg=bg,fg=fg,font="Arial")
@@ -282,9 +310,23 @@ def settings():
     sts_btn2 = tk.Button(sts_lblfr,text="Select project",bg=btn,fg=fg,font="Arial",command=sts_loadbackup)
     sts_btn2.grid(row=1,column=1)
 
+    sts_lblfr2 = tk.LabelFrame(sts,text="Theming",bg=bg,fg=fg,padx=250,pady=30)
+    sts_lblfr2.grid(row=1,column=0)
+
+    sts_lbl3 = tk.Label(sts_lblfr2,text="Theme preset: ",bg=bg,fg=fg,font="Arial")
+    sts_lbl3.grid(row=0,column=0)
+
+    global sts_cb
+    sts_cb = ttk.Combobox(sts_lblfr2, values=["Light","Dark"])
+    sts_cb.grid(row=0,column=1)
+    sts_cb.current(0)
+
+    sts_btn3 = tk.Button(sts_lblfr2,text="Save",bg=btn,fg=fg,font="Arial",command=sts_theme_save)
+    sts_btn3.grid(row=1,column=0)
+
     sts.mainloop()
 
-def home():
+def home_screen():
     global home
     home = tk.Tk()
     home.title("Everyone IDE")
@@ -295,7 +337,7 @@ def home():
     home_title = tk.Label(home,text="Everyone IDE",bg=bg,fg=fg,font="Arial 57 bold")
     home_title.grid(row=0,column=0)
 
-    home_lblfr = tk.LabelFrame(home,text="Create new project",padx=87,pady=30)
+    home_lblfr = tk.LabelFrame(home,text="Create new project",bg=bg,fg=fg,padx=87,pady=30)
     home_lblfr.grid(row=1,column=0)
 
     home_lbl = tk.Label(home_lblfr,text="Name (Do not use \, /, :, *, ?, \", <, > or |): ",bg=bg,fg=fg,font="Arial")
@@ -308,7 +350,7 @@ def home():
     home_btn = tk.Button(home_lblfr,text="Create",bg=btn,fg=fg,font="Arial",command=create_screen)
     home_btn.grid(row=1,column=2)
 
-    home_lblfr2 = tk.LabelFrame(home,text="Load project",padx=243,pady=30)
+    home_lblfr2 = tk.LabelFrame(home,text="Load project",bg=bg,fg=fg,padx=243,pady=30)
     home_lblfr2.grid(row=2,column=0)
 
     home_lbl2 = tk.Label(home_lblfr2,text="Load your project here.",bg=bg,fg=fg,font="Arial")
@@ -317,7 +359,7 @@ def home():
     home_btn2 = tk.Button(home_lblfr2,text="Load",bg=btn,fg=fg,font="Arial",command=load_screen)
     home_btn2.grid(row=1,column=1)
 
-    home_lblfr3 = tk.LabelFrame(home,text="Preferences",padx=55,pady=30)
+    home_lblfr3 = tk.LabelFrame(home,text="Preferences",bg=bg,fg=fg,padx=55,pady=30)
     home_lblfr3.grid(row=3,column=0)
 
     home_lbl3 = tk.Label(home_lblfr3,text="Would you like to set up the IDE to your liking? You're at the right place.",bg=bg,fg=fg,font="Arial")
@@ -335,4 +377,4 @@ def home():
     home.mainloop()
 
 if __name__ == "__main__":
-    home()
+    home_screen()
