@@ -32,11 +32,21 @@ def set_entry(e,text):
     e.insert(0,text)
     return
 
+def editor_text():
+    pass
+
 def editor(proname,propath,procode,protype):
-    print(proname)
-    print(propath)
-    print(procode)
-    print(protype)
+    global editor
+    editor = tk.Tk()
+    editor.title("Editor")
+    editor.config(bg=bg)
+    editor.state('zoomed')
+    editor.iconbitmap("./res/icon.ico")
+
+    if procode == "Text coding":
+        editor_text()
+    elif procode == "Visual coding":
+        mb.showerror("Sorry","Sorry... This is coming soon...")
 
 def newpro_create():
     global protype
