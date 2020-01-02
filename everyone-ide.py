@@ -59,6 +59,10 @@ def newpro_browsepath():
     path = fd.askdirectory()
     set_entry(newpro_e2,path)
 
+def newpro2_back():
+    newpro2.destroy()
+    create_screen()
+
 def create_screen2():
     global proname
     proname = newpro_e.get()
@@ -76,7 +80,7 @@ def create_screen2():
         newpro2 = tk.Tk()
         newpro2.title("Create new Project")
         newpro2.config(bg=bg)
-        newpro2.geometry("500x225")
+        newpro2.geometry("500x325")
         newpro2.iconbitmap("res/icon.ico")
 
         newpro2_lblfr = tk.LabelFrame(newpro2,text="Project type",bg=bg,fg=fg,padx=150,pady=30)
@@ -93,13 +97,23 @@ def create_screen2():
         newpro2_btn = tk.Button(newpro2,text="Create",bg=btn,fg=fg,font="Arial",width=40,height=5,command=newpro_create)
         newpro2_btn.grid(row=1,column=0)
 
+        newpro2_btn2 = tk.Button(newpro2,text="Back",bg=btn,fg=fg,font="Arial",width=40,height=5,command=newpro2_back)
+        newpro2_btn2.grid(row=2,column=0)
+
         newpro2.mainloop()
     else:
         mb.showerror("Error creating project","Woops, you forgot to fill in a project name!")
 
+def newpro_back():
+    newpro.destroy()
+    home_screen()
+
 def create_screen():
     global proname
-    proname = home_e.get()
+    try:
+        proname = home_e.get()
+    except:
+        pass
     global propath
     propath = os.path.dirname(os.path.abspath(__file__))
     global procode
@@ -114,7 +128,7 @@ def create_screen():
         newpro = tk.Tk()
         newpro.title("Create new Project")
         newpro.config(bg=bg)
-        newpro.geometry("500x300")
+        newpro.geometry("500x400")
         newpro.iconbitmap("res/icon.ico")
 
         newpro_lblfr = tk.LabelFrame(newpro,text="Settings",bg=bg,fg=fg,padx=75,pady=30)
@@ -148,6 +162,9 @@ def create_screen():
         newpro_btn2 = tk.Button(newpro,text="Next",bg=btn,fg=fg,font="Arial",width=40,height=5,command=create_screen2)
         newpro_btn2.grid(row=1,column=0)
 
+        newpro_btn3 = tk.Button(newpro,text="Back",bg=btn,fg=fg,font="Arial",width=40,height=5,command=newpro_back)
+        newpro_btn3.grid(row=2,column=0)
+
         set_entry(newpro_e,proname)
         set_entry(newpro_e2,propath)
 
@@ -179,6 +196,10 @@ def load_load():
     except:
         mb.showerror("Error loading project","Woops, you forgot to select a project to load!")
 
+def load_back():
+    load.destroy()
+    home_screen()
+
 def load_screen():
     try:
         home.destroy()
@@ -189,7 +210,7 @@ def load_screen():
     load = tk.Tk()
     load.title("Load Project")
     load.config(bg=bg)
-    load.geometry("365x350")
+    load.geometry("365x475")
     load.iconbitmap("res/icon.ico")
 
     load_lblfr = tk.LabelFrame(load,text="Select project",bg=bg,fg=fg,padx=87,pady=30)
@@ -204,6 +225,9 @@ def load_screen():
 
     load_btn = tk.Button(load,text="Load",bg=btn,fg=fg,font="Arial",width=40,height=5,command=load_load)
     load_btn.grid(row=1,column=0)
+
+    load_btn2 = tk.Button(load,text="Back",bg=btn,fg=fg,font="Arial",width=40,height=5,command=load_back)
+    load_btn2.grid(row=2,column=0)
 
     load.mainloop()
 
@@ -282,6 +306,10 @@ def sts_theme_save():
     sts.destroy()
     home_screen()
     
+def sts_back():
+    sts.destroy()
+    home_screen()
+
 def settings():
     try:
         home.destroy()
@@ -292,7 +320,7 @@ def settings():
     sts = tk.Tk()
     sts.title("Preferences")
     sts.config(bg=bg)
-    sts.geometry("675x295")
+    sts.geometry("675x400")
     sts.iconbitmap("res/icon.ico")
 
     sts_lblfr = tk.LabelFrame(sts,text="Backups",bg=bg,fg=fg,padx=263,pady=30)
@@ -323,6 +351,9 @@ def settings():
 
     sts_btn3 = tk.Button(sts_lblfr2,text="Save",bg=btn,fg=fg,font="Arial",command=sts_theme_save)
     sts_btn3.grid(row=1,column=0)
+
+    sts_btn4 = tk.Button(sts,text="Back",bg=btn,fg=fg,font="Arial",width=40,height=5,command=sts_back)
+    sts_btn4.grid(row=2,column=0)
 
     sts.mainloop()
 
