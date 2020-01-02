@@ -42,18 +42,21 @@ def newpro_create():
     global protype
     protype = newpro2_cb.get()
 
-    try:
-        newpro2.destroy()
-    except:
-        pass
-
     prdf = open("./prd/" + proname + ".eprd","w")
     prdf.write(proname + "\n" + propath + "\n" + procode + "\n" + protype)
     prdf.close()
 
-    os.mkdir(propath + "/" + proname)
+    try:
+        os.mkdir(propath + "/" + proname)
 
-    editor(proname,propath,procode,protype)
+        try:
+            newpro2.destroy()
+        except:
+            pass
+
+        editor(proname,propath,procode,protype)
+    except Exception as e:
+        mb.showerror("Error",e)
 
 def newpro_browsepath():
     path = fd.askdirectory()
@@ -310,6 +313,45 @@ def sts_back():
     sts.destroy()
     home_screen()
 
+def smp_del():
+    ask = mb.askquestion("Watch out!","Are you sure you want to delete '" + get_lb(smp_lb) + "'?")
+    if ask == 'yes':
+        with open("./prd/" + get_lb(smp_lb) + ".eprd","r") as data:
+            lines = data.readlines()
+        try:
+            shutil.rmtree(lines[1].replace("\n","") + "/" + get_lb(smp_lb))
+        except Exception as e:
+            mb.showerror("Error",e)
+        try:
+            os.remove("./prd/" + get_lb(smp_lb) + ".eprd")
+        except Exception as e:
+            mb.showerror("Error",e)
+    else:
+        pass
+
+def sts_manpro():
+    global smp
+    smp = tk.Tk()
+    smp.title("Manage Projects")
+    smp.config(bg=bg)
+    smp.geometry("365x350")
+    smp.iconbitmap("res/icon.ico")
+
+    smp_lblfr = tk.LabelFrame(smp,text="Select project",bg=bg,fg=fg,padx=87,pady=30)
+    smp_lblfr.grid(row=0,column=0)
+
+    global smp_lb
+    smp_lb = tk.Listbox(smp_lblfr,selectmode=tk.SINGLE)
+    smp_lb.grid(row=0,column=0)
+    smp_lb.delete(0,tk.END)
+    for file in os.listdir("./prd/"):
+        smp_lb.insert(1,os.path.splitext(str(file))[0])
+
+    smp_btn = tk.Button(smp,text="Delete",bg=btn,fg=fg,font="Arial",width=40,height=5,command=smp_del)
+    smp_btn.grid(row=2,column=0)
+
+    smp.mainloop()
+
 def settings():
     try:
         home.destroy()
@@ -320,7 +362,7 @@ def settings():
     sts = tk.Tk()
     sts.title("Preferences")
     sts.config(bg=bg)
-    sts.geometry("675x400")
+    sts.geometry("675x525")
     sts.iconbitmap("res/icon.ico")
 
     sts_lblfr = tk.LabelFrame(sts,text="Backups",bg=bg,fg=fg,padx=263,pady=30)
@@ -349,11 +391,17 @@ def settings():
     sts_cb.grid(row=0,column=1)
     sts_cb.current(0)
 
-    sts_btn3 = tk.Button(sts_lblfr2,text="Save",bg=btn,fg=fg,font="Arial",command=sts_theme_save)
-    sts_btn3.grid(row=1,column=0)
+    sts_lblfr3 = tk.LabelFrame(sts,text="Manage projects",bg=bg,fg=fg,padx=330,pady=30)
+    sts_lblfr3.grid(row=2,column=0)
 
-    sts_btn4 = tk.Button(sts,text="Back",bg=btn,fg=fg,font="Arial",width=40,height=5,command=sts_back)
+    sts_btn3 = tk.Button(sts_lblfr3,text="Manage projects",bg=btn,fg=fg,command=sts_manpro)
+    sts_btn3.grid(row=0,column=0)
+
+    sts_btn4 = tk.Button(sts_lblfr2,text="Save",bg=btn,fg=fg,font="Arial",command=sts_theme_save)
     sts_btn4.grid(row=2,column=0)
+
+    sts_btn5 = tk.Button(sts,text="Back",bg=btn,fg=fg,font="Arial",width=40,height=5,command=sts_back)
+    sts_btn5.grid(row=3,column=0)
 
     sts.mainloop()
 
